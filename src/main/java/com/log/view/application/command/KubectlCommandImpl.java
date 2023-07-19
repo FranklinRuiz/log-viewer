@@ -7,6 +7,7 @@ import org.springframework.stereotype.Component;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 @Slf4j
 @Component
@@ -48,8 +49,8 @@ public class KubectlCommandImpl implements KubectlCommand {
         });
         threads.clear();
         long endTime = System.currentTimeMillis();
-        long duration = endTime - startTime;
-        log.info("Sincronizacion completado: {} milisegundos", duration);
+        long durationSeconds = TimeUnit.MILLISECONDS.toSeconds(endTime - startTime);
+        log.info("Sincronización completada: {} segundos", durationSeconds);
     }
 
     private void executeCommand(String command) {

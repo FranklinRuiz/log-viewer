@@ -25,7 +25,7 @@ public class LogController {
     }
 
     @GetMapping("/filter")
-    public List<LogResponseDto> getLogsFilter(@RequestParam(required = false) String traceId, @RequestParam(required = false) String message) {
-        return logService.logsFilter(traceId, message);
+    public List<LogResponseDto> getLogsFilter(@RequestParam(required = false) String traceId, @RequestParam(required = false) String message, @RequestParam int pageNumber) {
+        return logService.logsFilter(traceId, message, pageNumber);
     }
 }

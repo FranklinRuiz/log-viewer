@@ -19,11 +19,12 @@ export class ViewService {
     return this.http.post<any>(`${this.url}/api/log/sync-logs`, components);
   }
 
-  filterLogs(traceId: string, message: string) {
+  filterLogs(traceId: string, message: string, pageNumber: number) {
     let params = new HttpParams();
     params = params.append('traceId', traceId);
     params = params.append('message', message);
-    return this.http.get<any>(`${this.url}/api/log/filter`,{params});
+    params = params.append('pageNumber', pageNumber);
+    return this.http.get<any>(`${this.url}/api/log/filter`, { params });
   }
 
 }

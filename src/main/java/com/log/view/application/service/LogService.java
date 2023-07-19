@@ -9,5 +9,5 @@ public interface LogService {
 
     boolean syncLogs(List<String> components);
 
-    List<LogResponseDto> logsFilter(String traceId, String message);
+    List<LogResponseDto> logsFilter(String traceId, String message, int pageNumber);
 }

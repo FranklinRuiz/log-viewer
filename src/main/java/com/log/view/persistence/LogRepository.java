@@ -7,5 +7,5 @@ import java.util.List;
 public interface LogRepository {
     List<String> allComponents();
 
-    List<LogResponseDto> logsFilter(String traceId, String message);
+    List<LogResponseDto> logsFilter(String traceId, String message, int pageNumber);
 }

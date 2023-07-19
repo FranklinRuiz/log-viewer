@@ -5,6 +5,7 @@ import com.log.view.infrastructure.DataReader;
 import com.log.view.infrastructure.model.LogModel;
 import com.log.view.persistence.mapper.LogMapper;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
@@ -20,13 +21,16 @@ public class LogRepositoryImpl implements LogRepository {
 
     private final DataReader dataReader;
 
+    @Value("${data.pagination.pageSize}")
+    private int pageSize;
+
     @Override
     public List<String> allComponents() {
         return dataReader.deploymentTextReader();
     }
 
     @Override
-    public List<LogResponseDto> logsFilter(String traceId, String message) {
+    public List<LogResponseDto> logsFilter(String traceId, String message, int pageNumber) {
         List<LogModel> logModels = dataReader.jsonLogReader();
         if (!traceId.trim().isEmpty() || !message.trim().isEmpty()) {
 
@@ -41,7 +45,14 @@ public class LogRepositoryImpl implements LogRepository {
                     .collect(Collectors.toList());
         }
         logModels.sort(Comparator.comparing(LogModel::getTimestamp));
-        return logModels.stream().map(LogMapper.INSTANCE::map).collect(Collectors.toList());
+
+        pageNumber = (logModels.size() / pageSize) - pageNumber;
+
+        List<LogModel> page = logModels.stream()
+                .skip(pageNumber * pageSize)
+                .limit(pageSize)
+                .collect(Collectors.toList());
+        return page.stream().map(LogMapper.INSTANCE::map).collect(Collectors.toList());
     }
 
     private List<String> filterMessageLog(String message) {

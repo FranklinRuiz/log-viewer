@@ -77,7 +77,7 @@ public class DataReaderImpl implements DataReader {
 
     private List<LogModel> jsonReader(File jsonFile) {
         List<LogModel> logModels = new ArrayList<>();
-
+        String componentName = jsonFile.getName().substring(0, jsonFile.getName().lastIndexOf("."));
         ObjectMapper mapper = new ObjectMapper();
         try (BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(jsonFile), "UTF-8"))) {
             String linea;
@@ -92,7 +92,7 @@ public class DataReaderImpl implements DataReader {
                             .loggerName(getJsonNodeValue(logNode, "logger.name"))
                             .traceId(getJsonNodeValue(logNode, "traceId"))
                             .spanId(getJsonNodeValue(logNode, "spanId"))
-                            .entityName(getJsonNodeValue(logNode, "entity.name"))
+                            .entityName((getJsonNodeValue(logNode, "entity.name").isEmpty()) ? componentName : getJsonNodeValue(logNode, "entity.name"))
                             .errorClass(getJsonNodeValue(logNode, "error.class"))
                             .errorMessage(getJsonNodeValue(logNode, "error.message"))
                             .errorStack(getJsonNodeValue(logNode, "error.stack"))

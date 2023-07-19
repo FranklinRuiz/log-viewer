@@ -43,7 +43,7 @@ public class LogServiceImpl implements LogService {
     }
 
     @Override
-    public List<LogResponseDto> logsFilter(String traceId, String message) {
-        return logRepository.logsFilter(traceId, message);
+    public List<LogResponseDto> logsFilter(String traceId, String message, int pageNumber) {
+        return logRepository.logsFilter(traceId, message, pageNumber);
     }
 }

@@ -8,3 +8,7 @@ command:
   deploymentFileName: "deployment.txt"
   deploymentComponents: "kubectl get deployment"
   logComponents: "kubectl logs --since 15m --tail -1 -l app="
+
+data:
+  pagination:
+    pageSize: 1000
