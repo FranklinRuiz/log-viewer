@@ -67,7 +67,7 @@ export class LogComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   scrollToBottom(): void {
-    this.scrollContainer.nativeElement.scrollTop = this.scrollContainer.nativeElement.scrollHeight - 1000;
+    this.scrollContainer.nativeElement.scrollTop = this.scrollContainer.nativeElement.scrollHeight - 950;
   }
 
   scrollToTop(): void {
@@ -100,6 +100,7 @@ export class LogComponent implements OnInit, OnDestroy, AfterViewInit {
       error: err => console.error(err),
       complete: () => {
         this.onMessage('Sincronización de logs completado');
+        this.page = 0;
         this.onFilterLogs();
       }
     });
