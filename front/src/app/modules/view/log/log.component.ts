@@ -30,6 +30,7 @@ export class LogComponent implements OnInit, OnDestroy, AfterViewInit {
 
   traceId: string = "";
   message: string = "";
+  infoUpdate: string = "";
 
   constructor(
     private matSnackBar: MatSnackBar,
@@ -91,6 +92,7 @@ export class LogComponent implements OnInit, OnDestroy, AfterViewInit {
       error: err => console.error(err),
       complete: () => this.onMessage('Carga de componentes completado')
     });
+    this.onInfoUpdate();
   }
 
   onSyncLogs(): void {
@@ -102,6 +104,7 @@ export class LogComponent implements OnInit, OnDestroy, AfterViewInit {
         this.onMessage('Sincronización de logs completado');
         this.page = 0;
         this.onFilterLogs();
+        this.onInfoUpdate();
       }
     });
   }
@@ -111,9 +114,7 @@ export class LogComponent implements OnInit, OnDestroy, AfterViewInit {
       this.page = 0;
     }
     this.subscription = this.service.filterLogs(this.traceId, this.message, this.page).subscribe({
-      next: response => {
-        this.dataSource = response;
-      },
+      next: response => this.dataSource = response,
       error: err => console.error(err),
       complete: () => {
         setTimeout(() => {
@@ -148,6 +149,24 @@ export class LogComponent implements OnInit, OnDestroy, AfterViewInit {
       'Cerrar',
       { duration: 3000, verticalPosition: 'bottom', horizontalPosition: 'center' }
     );
+  }
+
+  onDiagram() {
+    this.service.generateDiagram(this.traceId).subscribe(data => {
+      navigator.clipboard.writeText(`${data}`).then(() => {
+        this.onMessage('Diagrama copiado');
+      }).catch(err => {
+        console.error('Error al copiar diagrama: ', err);
+      });
+    });
+  }
+
+  onInfoUpdate() {
+    this.service.infoUpdate().subscribe({
+      next: response => this.infoUpdate = response,
+      error: err => console.error(err),
+      complete: () => console.log("info update complete")
+    });
   }
 
   ngOnDestroy() {

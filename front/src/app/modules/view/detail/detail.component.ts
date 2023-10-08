@@ -14,7 +14,7 @@ export class DetailComponent {
 
   constructor(
     private sanitizer: DomSanitizer,
-    public dialogRef: MatDialogRef<DetailComponent>,
+    // public dialogRef: MatDialogRef<DetailComponent>,
     @Inject(MAT_DIALOG_DATA) public data: any,
     private matSnackBar: MatSnackBar
   ) {

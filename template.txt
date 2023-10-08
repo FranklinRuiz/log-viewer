@@ -1,0 +1,14 @@
+## TRACE diagram
+# label: %component%
+# style: shape=%shape%;fillColor=%fill%;strokeColor=%stroke%;verticalLabelPosition=bottom;prIcon=%icon%;verticalAlign=top;
+# namespace: csvimport-
+# connect: {"from":"refs", "to":"component", "invert":false, "fromlabel": "text", "style":"curved=1;endArrow=blockThin;endFill=1;fontSize=11;"}
+# width: 70
+# height: 60
+# ignore: shape,fill,stroke,icon,refs,text
+# nodespacing: 40
+# levelspacing: 100
+# edgespacing: 40
+# layout: horizontalflow
+## CSV starts below this line
+component,fill,stroke,shape,icon,refs,text

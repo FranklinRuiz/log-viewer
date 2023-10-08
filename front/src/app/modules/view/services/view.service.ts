@@ -27,4 +27,17 @@ export class ViewService {
     return this.http.get<any>(`${this.url}/api/log/filter`, { params });
   }
 
+  generateDiagram(traceId: string) {
+    let params = new HttpParams();
+    params = params.append('traceId', traceId);
+    return this.http.get<any>(`${this.url}/api/log/generate-diagram`, {
+      params: params,
+      responseType: 'text' as 'json'
+    });
+  }
+
+  infoUpdate() {
+    return this.http.get<any>(`${this.url}/api/log/info-update`, { responseType: 'text' as 'json' });
+  }
+
 }
