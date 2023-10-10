@@ -1,5 +1,7 @@
 HELP.md
 logs/
+logs_/
+deployment.txt
 target/
 !.mvn/wrapper/maven-wrapper.jar
 !**/src/main/**/target/

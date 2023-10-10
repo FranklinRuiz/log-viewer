@@ -65,7 +65,7 @@ public class LogRepositoryImpl implements LogRepository {
         List<LogModel> logModels = dataReader.jsonLogReader();
         List<String> sqlFilters = Arrays.asList("select", "SELECT", "insert", "INSERT", "update", "UPDATE");
         List<String> serviceFilters = Arrays.asList("http", "https", "SOAP");
-        List<String> excludes = Arrays.asList("extracted", "binding", "content", "Response", "{'");
+        List<String> excludes = Arrays.asList("extracted", "binding", "Response", "x-", "referer", "forwarded", "img-src", "] {", "origin: ", "serviceid: ", "/actuator", "] access");
         List<String> httpMethods = Arrays.asList("POST", "GET", "UPDATE", "DELETE");
 
         List<String> all = new ArrayList<>();
