@@ -1,13 +1,17 @@
 package com.log.view.application.command;
 
+import jakarta.annotation.PreDestroy;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Component
@@ -25,6 +29,8 @@ public class KubectlCommandImpl implements KubectlCommand {
     @Value("${folder.path}")
     private String folderPath;
 
+    private final ExecutorService executorService = Executors.newCachedThreadPool();
+
     @Override
     public void deploymentComponentsExecute() {
         executeCommand(deploymentComponentsCommand + " > " + deploymentFileName);
@@ -33,38 +39,51 @@ public class KubectlCommandImpl implements KubectlCommand {
     @Override
     public void logComponentsExecute(List<String> components) {
         long startTime = System.currentTimeMillis();
-        List<Thread> threads = new ArrayList<>();
-        components.forEach(component -> {
-            Thread thread = new Thread(() -> executeCommand(logComponentsCommand + component + " > " + folderPath + "/" + component + ".json"));
-            threads.add(thread);
-            thread.start();
-        });
 
-        threads.forEach(thread -> {
+        List<Future<?>> futures = components.stream()
+                .map(component -> executorService.submit(() ->
+                        executeCommand(logComponentsCommand + component + " > " + folderPath + "/" + component + ".json")
+                ))
+                .collect(Collectors.toList());
+
+        for (Future<?> future : futures) {
             try {
-                thread.join();
-            } catch (InterruptedException e) {
-                e.printStackTrace();
+                future.get();
+            } catch (Exception e) {
+                log.error("Error esperando que el comando termine", e);
             }
-        });
-        threads.clear();
+        }
+
         long endTime = System.currentTimeMillis();
         long durationSeconds = TimeUnit.MILLISECONDS.toSeconds(endTime - startTime);
-        log.info("Sincronización completada: {} segundos", durationSeconds);
+        log.info("Sincronizacion completada en {} segundos", durationSeconds);
     }
 
     private void executeCommand(String command) {
-        try {
-            ProcessBuilder processBuilder = new ProcessBuilder();
-            processBuilder.command("cmd.exe", "/c", command);
+         try {
+            ProcessBuilder processBuilder = new ProcessBuilder("cmd.exe", "/c", command);
             Process process = processBuilder.start();
             int exitCode = process.waitFor();
             if (exitCode != 0) {
-                log.info("Comando ejecutado. Codigo de salida: {}", exitCode);
+                log.info("Comando ejecutado. Código de salida: {}", exitCode);
             }
         } catch (IOException | InterruptedException e) {
-            e.printStackTrace();
+            log.error("Error ejecutando comando: {}", command, e);
         }
+    }
+
+    @PreDestroy
+    public void shutdownExecutor() {
+        log.info("Apagando CachedThreadPool Executor...");
+        executorService.shutdown();
+        try {
+            if (!executorService.awaitTermination(60, TimeUnit.SECONDS)) {
+                executorService.shutdownNow();
+            }
+        } catch (InterruptedException e) {
+            executorService.shutdownNow();
+        }
+        log.info("CachedThreadPool Executor apagado correctamente.");
     }
 
 }
